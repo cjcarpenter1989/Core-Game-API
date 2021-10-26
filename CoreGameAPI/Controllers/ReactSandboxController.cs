@@ -24,25 +24,27 @@ namespace CoreGameAPI.Controllers
         }
 
         // GET: api/<ReactSandboxController>
-        [HttpGet]
-        public async Task<List<SandboxElementViewModel>> Get()
+        [HttpGet("GetAllSandboxElements")]
+        public async Task<List<SandboxElementViewModel>> GetAllSandboxElements()
         {
             List<SandboxElement> sandboxElements = await _sandboxElementService.GetAllSandboxElements();
             List<SandboxElementViewModel> defaultElements = sandboxElements.Select(x => new SandboxElementViewModel { Key = x.SandboxElementKey, Style = new SandboxElementStyleViewModel { Color = x?.SandboxElementStyle?.Color } }).ToList();
             return defaultElements;
         }
 
-        // GET api/<ReactSandboxController>/5
-        [HttpGet("{id}")]
+
+        [HttpGet("Get/{id}")]
         public string Get(int id)
         {
             return "value";
         }
 
         // POST api/<ReactSandboxController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpPost("CreateSandboxElement")]
+        public async Task<SandboxElementViewModel> CreateSandboxElement([FromBody] SandboxElementViewModel value)
         {
+            SandboxElement sandboxElement = await _sandboxElementService.CreateSandboxElement(value);
+            return new SandboxElementViewModel { Key = sandboxElement.SandboxElementKey, Style = new SandboxElementStyleViewModel { Color = sandboxElement?.SandboxElementStyle?.Color } };
         }
 
         // PUT api/<ReactSandboxController>/5
@@ -52,9 +54,10 @@ namespace CoreGameAPI.Controllers
         }
 
         // DELETE api/<ReactSandboxController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("DeleteSandboxElement/{key}")]
+        public async Task DeleteSandboxElement(int key)
         {
+            await _sandboxElementService.DeleteSandboxElement(key);
         }
     }
 }
